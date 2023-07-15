@@ -1,12 +1,18 @@
-local dbg = require("dependencies/debugger")
+local dbg = require("dependencies.debugger")
+local lake = require("lake")
 
-print("Hello world")
+local function init()
+end
 
-entity = {
-  x = 0,
-  y = 0,
-  width = 32,
-  height = 32,
-  speed = 100
-}
-dbg.pp(entity)
+local function tick()
+  lake.compute()
+end
+
+local function render()
+end
+
+init()
+while true do
+  tick()
+  render()
+end
