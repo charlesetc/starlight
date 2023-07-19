@@ -1,71 +1,62 @@
-local lake = {}
-local reservoir = {}
+require "class"
+local ml = require "ml"
+
 local whens = {}
-local computing = false
+local data = {}
 
---- Define a computation over data within the incremental computation graph
----
---- usage: when("a ball is on the edge", {id = 4}, function (ball) ... end
-function lake.when(namespace, pattern, f)
-  table.insert(whens, { namespace = namespace, pattern = pattern, callback = f })
-end
+local When = class()
 
---- Insert data into the incremental computation graph
----
---- usage: provide("a ball is on the edge", {id = 4, position: {x, y}})
-function lake.add(namespace, data)
-  reservoir[namespace] = reservoir[namespace] or {}
-  table.insert(reservoir[namespace], { data = data, computed = computing })
-end
-
-local function remove_computed()
-  -- this could be a bit more efficient, storing two namespace addition tables,
-  -- one for computed and one for the not-computed, and then clearing the computed
-  -- table here.
-  for _, namespace_additions in pairs(reservoir) do
-    local deletions = {}
-    for i, addition in ipairs(namespace_additions) do
-      if addition.computed then
-        table.insert(deletions, i)
-      end
-    end
-
-    for _, deletion in pairs(deletions) do
-      table.remove(namespace_additions, deletion)
+function When:compute()
+  for _, datum in pairs(data[self.english_key]) do
+    if self:matches(datum) then
+      self.f(datum)
     end
   end
 end
 
-function lake.compute()
-  remove_computed()
+function When:matches(data)
+  for k, v in pairs(self.pattern) do
+    if data[k] ~= v then
+      return false
+    end
+  end
+  return true
+end
 
-  computing = true
+function put(english_key, datum)
+  data[english_key] = data[english_key] or {}
+  table.insert(data[english_key], datum)
+end
 
-  -- for each when
+function when(english_key, pattern, f)
+  local when = When:new { english_key = english_key, pattern = pattern, f = f }
+  table.insert(whens, when)
+end
+
+local function step()
   for _, when in pairs(whens) do
-    -- for each data `add`ed to the when's namespace
-    for _, addition in pairs(reservoir[when.namespace]) do
-      local data = addition.data
-      --- if the pattern matches, call the callback
-      local matches = true
-
-      for key, assertion in ipairs(when.pattern) do
-        if assertion ~= data[key] then
-          matches = false
-          break
-        end
-      end
-
-      if matches then
-        local status, err = pcall(function() when.callback(data) end)
-        if not status then
-          print("encountered an error in callback to when", debug.traceback(err))
-        end
-      end
-    end
+    when:compute()
   end
-
-  computing = false
 end
 
-return lake
+function checksum(data)
+  local sum = 0
+  for english_key, data_list in pairs(data) do
+    sum = sum + tonumber(string.format("%p", english_key))
+    for _, datum in pairs(data_list) do
+      sum = sum + tonumber(string.format("%p", datum))
+    end
+  end
+  sum = sum * ml.count(data)
+  return sum
+end
+
+function compute()
+  local old, new
+  repeat
+    old = new
+    step()
+    new = checksum(data)
+    pp(new)
+  until old == new
+end

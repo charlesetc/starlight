@@ -1,5 +1,8 @@
-local dbg = require("dependencies.debugger")
-local lake = require("lake")
+-- setup `require` to work with dependencies
+package.path = package.path .. ';./dependencies/?.lua;./dependencies/?/init.lua'
+
+local dbg = require("debugger")
+require("lake")
 
 local function init()
 end
@@ -11,8 +14,10 @@ end
 local function render()
 end
 
-init()
-while true do
-  tick()
-  render()
+local function main()
+  init()
+  while true do
+    tick()
+    render()
+  end
 end
