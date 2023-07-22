@@ -1,12 +1,35 @@
+local expect = require("expect")
 require 'lake'
 
-when('a', {}, function(a)
-  when('b', {}, function(b)
-    put('a + b', { value = a.value + b.value })
+expect("a basic implementation", [[
+::: a
+::: b
+::: c
+"hi there"	{ value = 200 }
+]], function()
+  when('a', {}, function(a)
+    print("::: a")
+    when('b', {}, function(b)
+      print("::: b")
+      put('c', { value = a.value + b.value })
+    end)
   end)
+
+  when('a', {}, function(a)
+    pp("a 1")
+  end)
+
+  when('a', {}, function(a)
+    pp("a 2")
+  end)
+
+  put('a', { value = 100 })
+  put('b', { value = 100 })
+
+  when('c', {}, function(result)
+    print("::: c")
+    pp("hi there", result)
+  end)
+
+  recompute()
 end)
-
-put('a', { value = 1 })
-put('b', { value = 2 })
-
-compute()

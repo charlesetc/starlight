@@ -1,2 +1,3 @@
+local expect = require 'expect'
 require 'main'
-dofile('test/basic.lua')
+expect.run_tests(...)
