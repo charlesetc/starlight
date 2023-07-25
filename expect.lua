@@ -100,18 +100,22 @@ local function write_corrected_file(filename, expectations_for_file)
   errfile:close()
 end
 
-local function run_tests(filter)
-  -- first load the right files
+local function files_matching(filter, extension)
   local files = {}
 
-  for file in io.popen('ls test/*.lua'):lines() do
-    name = file:match('test/(.*)%.lua')
+  for file in io.popen('ls test/*' .. extension):lines() do
+    local name = file:match('test/(.*)%' .. extension)
     if not filter or name:match(filter) then
       table.insert(files, file)
     end
   end
 
-  for _, file in ipairs(files) do
+  return files
+end
+
+local function run_tests(filter)
+  -- first load the right files
+  for _, file in ipairs(files_matching(filter, ".lua")) do
     current_file = file
     dofile(file)
   end
@@ -138,7 +142,26 @@ local function run_tests(filter)
   end
 end
 
-local library = { run_tests = run_tests }
+local function accept_tests(filter)
+  for _, file in ipairs(files_matching(filter, ".lua.err")) do
+    local destination = file:sub(1, -5) -- strip .err
+    local pipe = assert(io.popen("mv " .. file .. " " .. destination))
+    print(pipe:read("*all"))
+    pipe:close()
+  end
+end
+
+local function command(cmd, ...)
+  if cmd == "run" then
+    return run_tests(...)
+  elseif cmd == "accept" then
+    return accept_tests(...)
+  else
+    print("unknown command " .. (cmd or '""') .. ", expected `run` or `accept`")
+  end
+end
+
+local library = { run_tests = command }
 setmetatable(library, { __call = function(self, ...) return expect(...) end })
 
 return library

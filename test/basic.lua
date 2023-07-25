@@ -4,10 +4,13 @@ require 'lake'
 
 
 expect("a basic implementation", [[
+"a 1"
 ::: a
 ::: b
+"a 2"
 ::: c
-"hi there"	{ value = 200 }
+"hi there"
+{"value" = 200}
 ]], function()
   when('a', {}, function(a)
     print("::: a")
