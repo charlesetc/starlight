@@ -3,7 +3,7 @@ require 'rivulet'
 
 
 
-expect("a basic when usage", [[
+expect.test("nested whens", [[
 "a 1"
 ::: a
 ::: b
@@ -29,6 +29,7 @@ expect("a basic when usage", [[
   end)
 
   put('a', { value = 100 })
+
   put('b', { value = 100 })
 
   when('c', {}, function(result)

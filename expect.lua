@@ -166,7 +166,7 @@ local function command(cmd, ...)
   end
 end
 
-local library = { run_tests = command }
-setmetatable(library, { __call = function(self, ...) return expect(...) end })
+local library = { run_tests = command, test = expect }
+-- setmetatable(library, { __call = function(self, ...) return expect(...) end })
 
 return library
