@@ -1,9 +1,9 @@
 local expect = require("expect")
-require 'lake'
+require 'rivulet'
 
 
 
-expect("a basic implementation", [[
+expect("a basic when usage", [[
 "a 1"
 ::: a
 ::: b

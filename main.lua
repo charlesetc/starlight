@@ -2,13 +2,13 @@
 package.path = package.path .. ';./dependencies/?.lua;./dependencies/?/init.lua'
 
 local dbg = require("debugger")
-require("lake")
+require("rivulet")
 
 local function init()
 end
 
 local function tick()
-  lake.compute()
+  recompute()
 end
 
 local function render()
