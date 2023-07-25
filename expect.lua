@@ -2,6 +2,15 @@ local dbg = require "dependencies.debugger"
 require "class"
 local ml = require "dependencies.ml"
 
+local function strip_suffix(str, suffix)
+  local suffixPos = string.find(str, suffix, - #suffix, true)
+  if suffixPos and suffixPos == #str - #suffix + 1 then
+    return string.sub(str, 1, #str - #suffix)
+  else
+    return str
+  end
+end
+
 local function dot_pairs(...)
   local args = table.pack(...)
   args.n = nil
@@ -32,10 +41,6 @@ local function printer()
   return p
 end
 
--- idea: run tests when the file is run directly and only then.
--- the file system is the testing framework.
--- also have a command to run all the tests at once
-
 local Expectation = class()
 
 function Expectation:run()
@@ -54,7 +59,7 @@ function Expectation:run()
 
   -- print results
   self.result = printer.read()
-  self.failed = self.result ~= self.expected
+  self.failed = strip_suffix(self.result, "\n") ~= strip_suffix(self.expected, "\n")
 end
 
 local expectations = {} -- really a global
