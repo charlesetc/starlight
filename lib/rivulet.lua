@@ -5,7 +5,6 @@ local basics = require "basics"
 local When = class()
 
 local whens = {}
-local toplevel_whens = {}
 local parent = nil
 local depth = 0
 local data = {}
@@ -41,14 +40,16 @@ function When:compute()
 end
 
 function When:record()
-  if self.parent then
-    table.insert(self.parent.children, self)
-  else
-    table.insert(toplevel_whens, self)
-  end
-
   whens[self.english_key] = whens[self.english_key] or {}
-  table.insert(whens[self.english_key], self)
+
+  -- only record ourself if this when isn't already recorded
+  if not whens[self.english_key][self.f] then
+    whens[self.english_key][self.f] = self
+
+    if self.parent then
+      table.insert(self.parent.children, self)
+    end
+  end
 end
 
 function When:unrecord()
@@ -60,18 +61,18 @@ function When:unrecord()
   -- remove reference from the parent's children
   if self.parent then
     table.remove(self.parent.children, ml.indexof(self.parent.children, self))
-  else
-    table.remove(toplevel_whens, ml.indexof(toplevel_whens, self))
   end
 
   -- remove reference from the whens table
-  table.remove(whens[self.english_key], ml.indexof(whens[self.english_key], self))
+  whens[self.english_key][self.f] = nil
 
   -- mark as not stale, so we will skip this in the iteration of `recompute`
   self.stale = false
 end
 
+-- TODO: keep track of the puts that the whens used to have and no longer have
 function put(english_key, datum)
+  datum = datum or {}
   data[english_key] = data[english_key] or {}
   table.insert(data[english_key], datum)
 
@@ -85,6 +86,11 @@ function put(english_key, datum)
 end
 
 function when(english_key, pattern, f)
+  if not f then
+    f = pattern
+    pattern = {}
+  end
+
   local when = When:new {
     english_key = english_key,
     pattern = pattern,
@@ -118,4 +124,13 @@ function recompute()
       end
     end
   until done
+end
+
+function rivulet_debug_graph()
+  for k, v in pairs(whens) do
+    print(k)
+    for _, when in pairs(v) do
+      print("  " .. dbg.pretty(when))
+    end
+  end
 end

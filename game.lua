@@ -1,8 +1,8 @@
--- setup `require` to work with dependencies
-package.path = package.path .. ';./dependencies/?.lua;./dependencies/?/init.lua'
-
-local dbg = require("debugger")
-require("rivulet")
+require 'init'
+local rivulet = require 'rivulet'
+local recompute = rivulet.recompute
+local when = rivulet.when
+local put = rivulet.put
 
 local function init()
 end
