@@ -2,6 +2,8 @@ local dbg = require "dependencies.debugger"
 require "class"
 local ml = require "dependencies.ml"
 
+local lib = {}
+
 local function strip_suffix(str, suffix)
   local suffixPos = string.find(str, suffix, - #suffix, true)
   if suffixPos and suffixPos == #str - #suffix + 1 then
@@ -14,7 +16,7 @@ end
 local function dot_pairs(...)
   local args = table.pack(...)
   args.n = nil
-  return pairs(args)
+  return ipairs(args)
 end
 
 local function printer()
@@ -51,7 +53,15 @@ function Expectation:run()
   _G.print = printer.print
   _G.pp = printer.pp
 
-  self.f()
+  if lib.before then
+    lib.before()
+  end
+
+  local _status = xpcall(self.f, function(err)
+    print()
+    print(debug.traceback(err, 2))
+    print()
+  end)
 
   -- tear down context
   _G.print = old_print
@@ -108,7 +118,7 @@ end
 local function files_matching(filter, extension)
   local files = {}
 
-  for file in io.popen('ls test/*' .. extension):lines() do
+  for file in io.popen('ls test/*' .. extension .. ' 2>/dev/null'):lines() do
     local name = file:match('test/(.*)%' .. extension)
     if not filter or name:match(filter) then
       table.insert(files, file)
@@ -119,6 +129,11 @@ local function files_matching(filter, extension)
 end
 
 local function run_tests(filter)
+  -- remove all previous .err files to begin with
+  for _, file in ipairs(files_matching(nil, ".lua.err")) do
+    os.remove(file)
+  end
+
   -- first load the right files
   for _, file in ipairs(files_matching(filter, ".lua")) do
     current_file = file
@@ -166,7 +181,7 @@ local function command(cmd, ...)
   end
 end
 
-local library = { run_tests = command, test = expect }
--- setmetatable(library, { __call = function(self, ...) return expect(...) end })
+lib.run_tests = command
+lib.test = expect
 
-return library
+return lib

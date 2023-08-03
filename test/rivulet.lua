@@ -1,44 +1,51 @@
-local expect = require("expect")
-require 'rivulet'
+-- changes that I want:
+-- - require should also setlocal for the basename of the module
+-- - open should require and setlocal for each module in the list
+-- - there should be a way to set a new variable that gets the right index
+-- - also: add and test rivulet.pattern.any
 
--- expect.test("nested whens", [[
--- "a 1"
--- ::: a
--- ::: b
--- "a 2"
--- ::: c
--- "hi there"
--- 200
--- ]], function()
---   when('a', {}, function(a)
---     print("::: a")
---     when('b', {}, function(b)
---       print("::: b")
---       put('c', { value = a.value + b.value })
---     end)
---   end)
---
---   when('a', {}, function(a)
---     pp("a 1")
---   end)
---
---   when('a', {}, function(a)
---     pp("a 2")
---   end)
---
---   put('a', { value = 100 })
---
---   put('b', { value = 100 })
---
---   when('c', {}, function(result)
---     print("::: c")
---     pp("hi there", result.value)
---   end)
---
---   recompute()
--- end)
---
+local expect = require("expect")
+require("rivulet")
+
+function expect.before()
+  rivulet.reset()
+end
+
+expect.test("nested whens", [[
+::: a
+--> 1
+--> 2
+::: b
+::: c
+]], function()
+  when('a', function(a)
+    print("::: a")
+    when('b', function(b)
+      print("::: b")
+      put('c', a + b)
+    end)
+  end)
+
+  when('a', function(a)
+    print("--> 1")
+  end)
+
+  when('a', function(a)
+    print("--> 2")
+  end)
+
+  put('a', 100)
+  put('b', 100)
+
+  when('c', function(result)
+    print("::: c")
+  end)
+end)
+
 expect.test("multiple recomputations", [[
+evaluating fact 1
+evaluating fact 2
+evaluating fact 3
 ]], function()
   when('fact 1', function()
     print("evaluating fact 1")
@@ -52,31 +59,17 @@ expect.test("multiple recomputations", [[
     end)
   end)
 
-  recompute()
-
-  print('---')
-
   put('fact 1')
-
-  recompute()
-
-  put('fact 2')
-
-  recompute()
-
-  print('---')
-
   put('fact 3')
+end)
 
-  rivulet_debug_graph()
+expect.test("filter based on a field", [[
+{"data" = 3, "ok" = 2}
+]], function()
+  when('a', { ok = 2 }, function(data)
+    pp(data)
+  end)
 
-  recompute()
-
-  print('---')
-
-  recompute()
-
-  print('---')
-
-  recompute()
+  put('a', { err = 1 })
+  put('a', { ok = 2, data = 3 })
 end)

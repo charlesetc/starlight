@@ -12,4 +12,21 @@ function basics.flatten(xs)
   return ys
 end
 
+function basics.shallow_copy(input)
+  local output = {}
+  for k, v in pairs(input) do
+    output[k] = v
+  end
+  return output
+end
+
+function basics.remove_value(xs, x)
+  for i, y in pairs(xs) do
+    if x == y then
+      table.remove(xs, i)
+      return
+    end
+  end
+end
+
 return basics
