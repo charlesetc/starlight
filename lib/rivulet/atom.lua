@@ -1,4 +1,4 @@
-local ml = require "dependencies.ml"
+local ml = require "ml"
 local Atom = class()
 
 function Atom:withdraw()

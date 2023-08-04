@@ -1,6 +1,6 @@
-local dbg = require "dependencies.debugger"
+local dbg = require "debugger"
 require "class"
-local ml = require "dependencies.ml"
+local ml = require "ml"
 
 local lib = {}
 

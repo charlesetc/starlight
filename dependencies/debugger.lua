@@ -24,6 +24,8 @@
   * Properly handle being reentrant due to coroutines.
 ]]
 
+local ml = require "ml"
+
 local dbg
 
 -- Use ANSI color codes in the prompt by default.
@@ -49,8 +51,11 @@ local function pretty(obj, max_depth)
       return string.format("%q", obj)
     elseif type(obj) == "table" and depth < max_depth and not coerceable(obj) then
       local str = "{"
+      local keys = ml.keys(obj)
+      table.sort(keys)
 
-      for k, v in pairs(obj) do
+      for _, k in ipairs(keys) do
+        local v = obj[k]
         local pair = pretty(k, 0) .. " = " .. recurse(v, depth + 1)
         str = str .. (str == "{" and pair or ", " .. pair)
       end
