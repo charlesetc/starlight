@@ -2,7 +2,7 @@ local dbg = require "debugger"
 require "class"
 local ml = require "ml"
 
-local lib = {}
+local expect = {}
 
 local function strip_suffix(str, suffix)
   local suffixPos = string.find(str, suffix, - #suffix, true)
@@ -53,8 +53,8 @@ function Expectation:run()
   _G.print = printer.print
   _G.pp = printer.pp
 
-  if lib.before then
-    lib.before()
+  if expect.before then
+    expect.before()
   end
 
   local _status = xpcall(self.f, function(err)
@@ -75,7 +75,7 @@ end
 local expectations = {} -- really a global
 local current_file = nil
 
-local function expect(description, expected, f)
+function expect.test(description, expected, f)
   local expectation = Expectation:new {
     description = description,
     expected = expected,
@@ -128,7 +128,7 @@ local function files_matching(filter, extension)
   return files
 end
 
-local function run_tests(filter)
+function expect.run_tests(filter)
   -- remove all previous .err files to begin with
   for _, file in ipairs(files_matching(nil, ".lua.err")) do
     os.remove(file)
@@ -162,7 +162,7 @@ local function run_tests(filter)
   end
 end
 
-local function accept_tests(filter)
+function expect.accept(filter)
   for _, file in ipairs(files_matching(filter, ".lua.err")) do
     local destination = file:sub(1, -5) -- strip .err
     local pipe = assert(io.popen("mv " .. file .. " " .. destination))
@@ -171,17 +171,14 @@ local function accept_tests(filter)
   end
 end
 
-local function command(cmd, ...)
+function expect.command(cmd, ...)
   if cmd == "run" then
-    return run_tests(...)
+    return expect.run_tests(...)
   elseif cmd == "accept" then
-    return accept_tests(...)
+    return expect.accept(...)
   else
     print("unknown command " .. (cmd or '""') .. ", expected `run` or `accept`")
   end
 end
 
-lib.run_tests = command
-lib.test = expect
-
-return lib
+return expect
