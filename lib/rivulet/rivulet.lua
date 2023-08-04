@@ -9,15 +9,13 @@ local Atom = require "rivulet.atom"
 local whens = {}
 local atoms = {}
 
-rivulet = {}
-
 rivulet_globals = {
   whens = whens,
   atoms = atoms,
   dependencies = {}
 }
 
-function rivulet.reset()
+local function reset()
   whens = {}
   atoms = {}
   rivulet_globals.whens = whens
@@ -45,7 +43,7 @@ local function atoms_for_when(when)
   return coll
 end
 
-function when(english_key, pattern, f)
+local function when(english_key, pattern, f)
   if not f then
     f = pattern
     pattern = nil
@@ -68,7 +66,7 @@ function when(english_key, pattern, f)
   end
 end
 
-function put(english_key, data)
+local function put(english_key, data)
   local atom = Atom:new {
     english_key = english_key,
     data = data,
@@ -83,3 +81,10 @@ function put(english_key, data)
   end
   return atom
 end
+
+
+return {
+  when = when,
+  put = put,
+  reset = reset,
+}

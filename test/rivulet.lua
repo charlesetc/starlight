@@ -5,10 +5,12 @@
 -- - also: add and test rivulet.pattern.any
 
 local expect = require("expect")
-require("rivulet")
+local r = require("rivulet")
+local when = r.when
+local put = r.put
 
 function expect.before()
-  rivulet.reset()
+  r.reset()
 end
 
 expect.test("nested whens", [[
@@ -72,4 +74,9 @@ expect.test("filter based on a field", [[
 
   put('a', { err = 1 })
   put('a', { ok = 2, data = 3 })
+end)
+
+expect.test("", [[
+]], function()
+
 end)
