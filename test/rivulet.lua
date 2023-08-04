@@ -76,7 +76,14 @@ expect.test("filter based on a field", [[
   put('a', { ok = 2, data = 3 })
 end)
 
-expect.test("", [[
+expect.test("pat.any", [[
+{"err" = 1}
+{"err" = "hi", "extra" = 2}
 ]], function()
-
+  when('a', { err = r.pat.any }, function(data)
+    pp(data)
+  end)
+  put('a', { err = 1 })
+  put('a', { ok = 2, data = 3 })
+  put('a', { err = "hi", extra = 2 })
 end)

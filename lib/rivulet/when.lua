@@ -16,8 +16,14 @@ function When:matches(atom)
   end
 
   for k, v in pairs(self.pattern) do
-    if atom.data[k] ~= v then
-      return false
+    if type(v) == "table" and v.__rivulet_special == "any" then
+      if atom.data[k] == nil then
+        return false
+      end
+    else
+      if atom.data[k] ~= v then
+        return false
+      end
     end
   end
   return true

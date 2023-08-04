@@ -82,9 +82,13 @@ local function put(english_key, data)
   return atom
 end
 
+local pat = {}
+
+pat.any = { __rivulet_special = "any" }
 
 return {
   when = when,
   put = put,
   reset = reset,
+  pat = pat,
 }
