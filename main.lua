@@ -1,5 +1,5 @@
 dofile('init.lua')
-require 'class'
+local class = require 'class'
 
 local width = 40
 local height = 40

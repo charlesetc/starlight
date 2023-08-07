@@ -1,15 +1,18 @@
+require 'init'
+local expect = require 'expect'
+
 local task = {}
 
-function task.test()
-  os.execute("lua test.lua run")
+function task.test(...)
+  expect.run_tests(...)
 end
 
-function task.accept()
-  os.execute("lua test.lua accept")
+function task.accept(...)
+  expect.accept(...)
 end
 
 function task.client()
   os.execute("/Applications/love.app/Contents/MacOS/love .")
 end
 
-task[arg[1] or 'test']()
+task[arg[1] or 'test'](select(2, ...))

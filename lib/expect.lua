@@ -1,5 +1,5 @@
 local dbg = require "debugger"
-require "class"
+local class = require "class"
 local ml = require "ml"
 
 local expect = {}
@@ -22,16 +22,21 @@ end
 local function printer()
   local p = { output = {} }
 
+  local function sanitize(s)
+    s = string.gsub(s, "0x%x%x%x%x%x%x%x%x%x%x%x%x", "0xPOINTER")
+    return s
+  end
+
   function p.print(...)
     for _, v in dot_pairs(...) do
-      table.insert(p.output, tostring(v))
+      table.insert(p.output, sanitize(tostring(v)))
     end
   end
 
   function p.pp(...)
     for k, v in dot_pairs(...) do
       if k ~= 'n' then
-        table.insert(p.output, dbg.pretty(v))
+        table.insert(p.output, sanitize(dbg.pretty(v)))
       end
     end
   end
