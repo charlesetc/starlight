@@ -5,6 +5,8 @@ local class = require "class"
 local When = require "rivulet.when"
 local Atom = require "rivulet.atom"
 
+local rivulet = {}
+
 local whens = {}
 local atoms = {}
 
@@ -14,7 +16,7 @@ rivulet_globals = {
   dependencies = {}
 }
 
-local function reset()
+function rivulet.reset()
   whens = {}
   atoms = {}
   rivulet_globals.whens = whens
@@ -46,7 +48,7 @@ local function atoms_for_when(when)
   return atoms_for_pattern(when.english_key, when.pattern)
 end
 
-local function when(english_key, pattern, f)
+function rivulet.when(english_key, pattern, f)
   -- nice default arguments
   if not f then
     f = pattern
@@ -74,7 +76,7 @@ local function when(english_key, pattern, f)
   end
 end
 
-local function put(english_key, data)
+function rivulet.put(english_key, data)
   local atom = Atom:new {
     english_key = english_key,
     data = data,
@@ -97,15 +99,8 @@ local function put(english_key, data)
   return atom
 end
 
+rivulet.query   = atoms_for_pattern
+rivulet.pat     = {}
+rivulet.pat.any = { __rivulet_special = "any" }
 
-local pat = {}
-
-pat.any = { __rivulet_special = "any" }
-
-return {
-  when = when,
-  put = put,
-  reset = reset,
-  pat = pat,
-  query = atoms_for_pattern,
-}
+return rivulet

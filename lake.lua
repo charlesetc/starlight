@@ -12,7 +12,8 @@ function task.accept(...)
 end
 
 function task.client()
-  os.execute("/Applications/love.app/Contents/MacOS/love .")
+  task.test()
+  os.execute("/Applications/love.app/Contents/MacOS/love client")
 end
 
-task[arg[1] or 'test'](select(2, ...))
+task[arg[1] or 'client'](select(2, ...))

@@ -6,3 +6,6 @@ end
 search('dependencies')
 search('lib')
 search('client')
+
+dbg = require 'debugger'
+pp = dbg.pp
