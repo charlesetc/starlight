@@ -11,8 +11,8 @@ local square_size    = 20
 function squares.init()
   for i = 1, squares_across do
     for j = 1, squares_tall do
-      local color = { r = math.random(), g = math.random(), b = math.random() }
-      local square = Square:new({ x = i, y = j, color = color })
+      local color = { r = 0, g = 0, b = 0 }
+      local square = Square:new { x = i, y = j, color = color }
       table.insert(squares, square)
     end
   end
@@ -28,6 +28,10 @@ function squares.draw(offset)
       square_size,
       square_size)
   end
+end
+
+function squares.random()
+  return squares[math.random(#squares)]
 end
 
 return squares

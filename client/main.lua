@@ -2,6 +2,7 @@ dofile('init.lua')
 local love    = require 'love'
 
 local squares = require 'client.squares'
+local trees   = require 'client.trees'
 
 local offset  = nil
 
@@ -31,6 +32,9 @@ function love.keypressed(key)
 end
 
 function love.update(_dt)
+  if math.random() < 0.02 then
+    trees.create(squares.random())
+  end
 end
 
 function love.draw()
