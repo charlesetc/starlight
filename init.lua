@@ -1,11 +1,11 @@
 -- setup `require` to work with dependencies
-function search(path)
+function addpath(path)
   package.path = package.path .. ';./' .. path .. '/?.lua;./' .. path .. '/?/?.lua'
 end
 
-search('dependencies')
-search('lib')
-search('client')
+addpath('dependencies')
+addpath('lib')
+addpath('client')
 
 dbg = require 'debugger'
 pp = dbg.pp

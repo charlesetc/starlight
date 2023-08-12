@@ -3,12 +3,13 @@ local love    = require 'love'
 
 local squares = require 'client.squares'
 local trees   = require 'client.trees'
+local Point   = require 'point'
 
 local offset  = nil
 
 function love.load(args)
   love.window.setMode(1000, 600, { resizable = true, minwidth = 400, minheight = 400 })
-  offset = { x = 0, y = 0 }
+  offset = Point(0, 0)
   squares.init()
 end
 
