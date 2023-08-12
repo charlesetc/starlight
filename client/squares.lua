@@ -1,9 +1,7 @@
-local love  = require 'love'
-local r     = require 'rivulet'
-local when  = r.when
-local put   = r.put
-local query = r.query
+local love           = require 'love'
+local class          = require "class"
 
+local Square         = class()
 
 local squares        = {}
 local squares_across = 80
@@ -13,15 +11,15 @@ local square_size    = 20
 function squares.init()
   for i = 1, squares_across do
     for j = 1, squares_tall do
-      put("square", { x = i, y = j })
+      local color = { r = math.random(), g = math.random(), b = math.random() }
+      local square = Square:new({ x = i, y = j, color = color })
+      table.insert(squares, square)
     end
   end
 end
 
 function squares.draw(offset)
-  local squares = r.query("square")
-  for _, square in pairs(squares) do
-    square = square.data
+  for _, square in ipairs(squares) do
     love.graphics.setColor(square.color.r, square.color.g, square.color.b)
     love.graphics.rectangle(
       "fill",

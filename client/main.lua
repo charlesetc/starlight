@@ -1,14 +1,9 @@
 dofile('init.lua')
 local love    = require 'love'
-local r       = require 'rivulet'
-local put     = r.put
 
 local squares = require 'client.squares'
-local _       = require 'client.light'
-local _       = require 'client.trees'
 
-
-local offset = nil
+local offset  = nil
 
 function love.load(args)
   love.window.setMode(1000, 600, { resizable = true, minwidth = 400, minheight = 400 })
@@ -35,14 +30,7 @@ function love.keypressed(key)
   end
 end
 
-local time = put("time", 0.0)
-local t = 0
-
-
 function love.update(_dt)
-  time:withdraw()
-  t = t + 1
-  time = put("time", t)
 end
 
 function love.draw()
