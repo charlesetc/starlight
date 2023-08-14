@@ -1,2 +1,4 @@
+-p
+8000
 -L
 /tmp/redbean.log

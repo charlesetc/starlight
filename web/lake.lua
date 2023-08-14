@@ -8,9 +8,9 @@ function task.package()
   local files = {
     '.args',
     '.init.lua',
-    'hello.lua',
-    'lua/template.lua',
-    '_index.html'
+    'starlight.lua',
+    '_index.html',
+    'js/framework.js',
   }
 
   for _, file in ipairs(files) do

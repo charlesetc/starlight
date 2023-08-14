@@ -7,3 +7,4 @@ function addpath(path)
 end
 
 addpath('lua')
+print("listening on port 8000")
