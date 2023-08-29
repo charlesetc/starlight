@@ -74,7 +74,7 @@ function Expectation:run()
 
   -- print results
   self.result = printer.read()
-  self.failed = strip_suffix(self.result, "\n") ~= strip_suffix(self.expected, "\n")
+  return strip_suffix(self.result, "\n") == strip_suffix(self.expected, "\n")
 end
 
 local expectations = {} -- really a global
@@ -149,9 +149,8 @@ function expect.run_tests(filter)
   for file, expectations_for_file in pairs(expectations) do
     local file_success = true
     for _, expectation in ipairs(expectations_for_file) do
-      expectation:run()
-
-      file_success = file_success and not expectation.failed
+      local success = expectation:run()
+      file_success = file_success and success
     end
 
     if file_success then
