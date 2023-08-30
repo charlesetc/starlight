@@ -11,9 +11,8 @@ function task.accept(...)
   expect.accept(...)
 end
 
-function task.client()
-  task.test()
-  os.execute("/Applications/love.app/Contents/MacOS/love client")
+function task.main()
+  print("main")
 end
 
-task[arg[1] or 'client'](select(2, ...))
+task[arg[1] or 'main'](select(2, ...))
