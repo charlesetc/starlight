@@ -4,7 +4,7 @@ function addpath(path)
 end
 
 addpath('dependencies')
-addpath('lib')
+addpath('core')
 addpath('client')
 
 dbg = require 'debugger'
