@@ -29,4 +29,11 @@ function basics.remove_value(xs, x)
   end
 end
 
+function basics.with_file(name, mode, callback)
+  local f = io.open(name, mode)
+  local ret = callback(f)
+  io.close(f)
+  return ret
+end
+
 return basics
